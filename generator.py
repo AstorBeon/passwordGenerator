@@ -10,6 +10,14 @@ def set_arg_parser():
                                     and enjoy list of passwords!
                                     """)
 
+    # example
+    parser.add_argument(
+        '-E', '--example',
+        type=str,  # type of argument
+        default="",
+        help='example (default: "")'
+    )
+
     parser.add_argument(
         '-min', '--min_number',
         type=int,
@@ -31,12 +39,11 @@ def set_arg_parser():
         help='max number (default: ["Mumbo", "Jumbo", "Lumbo"])'
     )
 
-    # example
     parser.add_argument(
-        '-S', '--string',
+        '-R', '--router_name',
         type=str,
-        default="",
-        help='max number (default: )'
+        default="WiFi",
+        help='router name (default: WiFi)'
     )
 
     return parser.parse_args()
@@ -86,13 +93,13 @@ class generator():
     def clear(self):
         self.passwords.clear()
 
-    def add_random_passwords(self,number_of_chars:int):
-        #generates absolutely random passwords made of numbers, letters and special chars
+    def add_random_passwords(self, number_of_chars: int):
+        # generates absolutely random passwords made of numbers, letters and special chars
         letters = string.ascii_letters
         numbers = string.digits
         characters = string.punctuation
 
-        #tip: itertools:product
+        # tip: itertools:product
 
     def go_big(self, amount_of_additional_numbers: int = 100):
         # generates all possibilities with avaliable methods
