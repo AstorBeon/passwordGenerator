@@ -1,15 +1,31 @@
 import string
 from itertools import permutations
+import argparse
+
+
+def set_argparser():
+    parser = argparse.ArgumentParser(description="""
+                                    Hello there mate! This generator is creating passwords, however you like! 
+                                    Just shove in some key words (name of pet, city of birth maybe?) 
+                                    and enjoy list of passwords!
+                                    """)
+
+    parser.add_argument(
+        '-P', '--profile',
+        type=str,
+        default='default',
+        help='profile name (default: default)'
+    )
+
+    return parser.parse_args()
 
 
 class generator():
-    def __init__(self,words:[str]):
+    def __init__(self, words: [str]):
         self.provided_words = list(words)
-        self.passwords=[]
-        self.separators=[","," ","_","-",""]
-        self.special_chars = ["?","!",".","#","$","@"]
-
-
+        self.passwords = []
+        self.separators = [",", " ", "_", "-", ""]
+        self.special_chars = ["?", "!", ".", "#", "$", "@"]
 
     def help(self):
         print("Hello there mate! This generator is creating passwords, however you like! Just"
@@ -21,30 +37,28 @@ class generator():
               "by user) and number of keywords used in single passwords(might be provided by user, defualt 2")
 
     def generate_simple_provided_words_mix(self):
-        #generates all variations of provided words, joined by predefined separators
+        # generates all variations of provided words, joined by predefined separators
         for i in range(0, len(self.provided_words) + 1):
             for subset in permutations(self.provided_words, i):
                 for sep in self.separators:
                     self.passwords.append(sep.join(subset))
 
-
-    def add_numbers(self, max_number:int, min_number:int =0):
-        #adds numbers to passwords from 0 to max_number
-        templist=[]
+    def add_numbers(self, max_number: int, min_number: int = 0):
+        # adds numbers to passwords from 0 to max_number
+        templist = []
         for pwd in self.passwords:
             for num_of_nums in range(min_number, max_number):
-                templist.append(pwd+str(num_of_nums))
+                templist.append(pwd + str(num_of_nums))
         self.passwords.extend(templist)
 
-
     def add_special_characters(self):
-        #add single special character at the end, at the beginning and both beginning and end
-        templist=[]
+        # add single special character at the end, at the beginning and both beginning and end
+        templist = []
         for pwd in self.passwords:
             for char in self.special_chars:
-                templist.append(pwd+char)
-                templist.append(char+pwd)
-                templist.append(char+pwd+char)
+                templist.append(pwd + char)
+                templist.append(char + pwd)
+                templist.append(char + pwd + char)
         self.passwords.extend(templist)
 
     def clear(self):
@@ -58,35 +72,34 @@ class generator():
 
         #tip: itertools:product
 
-
-
-
-    def go_big(self,amount_of_additional_numbers:int = 100):
-        #generates all possibilities with avaliable methods
+    def go_big(self, amount_of_additional_numbers: int = 100):
+        # generates all possibilities with avaliable methods
         self.generate_simple_provided_words_mix()
         self.add_numbers(amount_of_additional_numbers)
         self.add_special_characters()
 
-    def go_small(self,max_added_number:int = 2025, min_added_number:int = 2000, number_of_keywords_in_password:int = 2):
-        #generates minimalistic set of passwords
-        if len(self.provided_words)<2:
-            number_of_keywords_in_password=len(self.provided_words)
+    def go_small(self, max_added_number: int = 2025, min_added_number: int = 2000,
+                 number_of_keywords_in_password: int = 2):
+        # generates minimalistic set of passwords
+        if len(self.provided_words) < 2:
+            number_of_keywords_in_password = len(self.provided_words)
         for i in range(0, number_of_keywords_in_password + 1):
             for subset in permutations(self.provided_words, i):
                 for sep in self.separators:
                     self.passwords.append(sep.join(subset))
 
-        self.add_numbers(min_added_number,max_added_number)
+        self.add_numbers(min_added_number, max_added_number)
 
-
-
-    def save(self,filename):
-        #saves generated passwords to file as txt
+    def save(self, filename):
+        # saves generated passwords to file as txt
         with open(filename, 'w') as f:
             for single_pass in self.passwords:
                 f.write("{}\n".format(single_pass))
 
+
 if __name__ == '__main__':
-    gen = generator(["Mumbo","Jumbo","Lumbo"])
+    args = set_argparser()
+    print(args)
+    gen = generator(["Mumbo", "Jumbo", "Lumbo"])
     gen.go_big()
     print(len(gen.passwords))
