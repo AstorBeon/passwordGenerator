@@ -1,3 +1,4 @@
+import string
 from itertools import permutations
 
 
@@ -45,6 +46,17 @@ class generator():
                 templist.append(char+pwd)
                 templist.append(char+pwd+char)
         self.passwords.extend(templist)
+
+    def clear(self):
+        self.passwords.clear()
+
+    def add_random_passwords(self,number_of_chars:int):
+        #generates absolutely random passwords made of numbers, letters and special chars
+        letters = string.ascii_letters
+        numbers = string.digits
+        characters = string.punctuation
+
+        #tip: itertools:product
 
 
 
