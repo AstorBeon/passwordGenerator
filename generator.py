@@ -3,7 +3,7 @@ from itertools import permutations
 import argparse
 
 
-def set_argparser():
+def set_arg_parser():
     parser = argparse.ArgumentParser(description="""
                                     Hello there mate! This generator is creating passwords, however you like! 
                                     Just shove in some key words (name of pet, city of birth maybe?) 
@@ -11,10 +11,32 @@ def set_argparser():
                                     """)
 
     parser.add_argument(
-        '-P', '--profile',
+        '-min', '--min_number',
+        type=int,
+        default=0,
+        help='min number (default: 0)'
+    )
+
+    parser.add_argument(
+        '-max', '--max_number',
+        type=int,
+        default=1000,
+        help='max number (default: 1000)'
+    )
+
+    parser.add_argument(
+        '-W', '--words',
+        type=list,
+        default=["Mumbo", "Jumbo", "Lumbo"],
+        help='max number (default: ["Mumbo", "Jumbo", "Lumbo"])'
+    )
+
+    # example
+    parser.add_argument(
+        '-S', '--string',
         type=str,
-        default='default',
-        help='profile name (default: default)'
+        default="",
+        help='max number (default: )'
     )
 
     return parser.parse_args()
@@ -98,8 +120,9 @@ class generator():
 
 
 if __name__ == '__main__':
-    args = set_argparser()
+    args = set_arg_parser()
     print(args)
-    gen = generator(["Mumbo", "Jumbo", "Lumbo"])
+
+    gen = generator(args.words)
     gen.go_big()
     print(len(gen.passwords))
