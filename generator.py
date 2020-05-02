@@ -15,7 +15,8 @@ class generator():
               "shove in some key words (name of pet, city of birth maybe?) and enjoy list of passwords!"
               "By default, creating a generator generates passwords made of mixes of keywords joined by different separators")
         print("\nMethods:\n-add_numbers -> adds numbers to generated passwords (from 0 to 10000"
-              "\n-add_special_characters -> adds special characters (just 1) to every password")
+              "\n-add_special_characters -> adds special characters (just 1) to every password"
+              "\n-go_big -> just uses all avaliable methods. Generates shitload of possible passwords")
 
     def generate_simple_provided_words_mix(self):
         for i in range(0, len(self.provided_words) + 1):
@@ -33,16 +34,30 @@ class generator():
 
 
     def add_special_characters(self):
+        #add single special character at the end, at the beginning and both beginning and end
         templist=[]
         for pwd in self.passwords:
             for char in self.special_chars:
                 templist.append(pwd+char)
+                templist.append(char+pwd)
+                templist.append(char+pwd+char)
         self.passwords.extend(templist)
 
 
 
 
+    def go_big(self):
+        #generates all possibilities with avaliable methods
+        self.add_numbers()
+        self.add_special_characters()
 
+
+
+    def save(self,filename):
+        #saves generated passwords to file as txt
+        with open(filename, 'w') as f:
+            for single_pass in self.passwords:
+                f.write("{}\n".format(single_pass))
 
 if __name__ == '__main__':
     gen = generator(["Mumbo","Jumbo","Lumbo"])
