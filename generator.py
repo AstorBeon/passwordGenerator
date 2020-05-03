@@ -51,7 +51,7 @@ def set_arg_parser():
 
 class generator():
     def __init__(self, words: [str]):
-        self.provided_words = list(words)
+        self.provided_words = words
         self.passwords = []
         self.separators = [",", " ", "_", "-", ""]
         self.special_chars = ["?", "!", ".", "#", "$", "@"]
@@ -64,6 +64,18 @@ class generator():
               "\n-go_big -> just uses all avaliable methods. Generates shitload of possible passwords"
               "\n-go_small -> takes minimalistic way of generating passes. characters+numbers(might be provided"
               "by user) and number of keywords used in single passwords(might be provided by user, defualt 2")
+
+    def add_capital(self):
+        self.provided_words.extend([x.capitalize() for x in self.provided_words])
+        self.provided_words=list(set(self.provided_words))
+
+    def add_lower(self):
+        self.provided_words.extend([x.lower() for x in self.provided_words])
+        self.provided_words=list(set(self.provided_words))
+
+    def add_upper(self):
+        self.provided_words.extend([x.upper() for x in self.provided_words])
+        self.provided_words=list(set(self.provided_words))
 
     def generate_simple_provided_words_mix(self):
         # generates all variations of provided words, joined by predefined separators
@@ -93,11 +105,13 @@ class generator():
     def clear(self):
         self.passwords.clear()
 
+
     def add_random_passwords(self, number_of_chars: int):
+        raise NotImplementedError("Add_random_passwords is not implemented yet")
         # generates absolutely random passwords made of numbers, letters and special chars
-        letters = string.ascii_letters
+        letters = string.ascii_letters #zwraca duże i małe!
         numbers = string.digits
-        characters = string.punctuation
+        characters = string.punctuation #too much!
 
         # tip: itertools:product
 
@@ -131,5 +145,7 @@ if __name__ == '__main__':
     print(args)
 
     gen = generator(args.words)
-    gen.go_big()
+
+    gen.generate_simple_provided_words_mix()
+    gen.add_numbers(args.max_number)
     print(len(gen.passwords))
