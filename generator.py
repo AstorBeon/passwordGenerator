@@ -9,13 +9,30 @@ def set_arg_parser():
                                     Just shove in some key words (name of pet, city of birth maybe?) 
                                     and enjoy list of passwords!
                                     """)
+    # group = parser.add_mutually_exclusive_group()
 
-    # example
     parser.add_argument(
-        '-E', '--example',
-        type=str,  # type of argument
-        default="",
-        help='example (default: "")'
+        '-r', '--random',
+        action="store_true",
+        help='random password '
+    )
+
+    parser.add_argument(
+        '-b', '--big',
+        action="store_true",
+        help='big letters'
+    )
+
+    parser.add_argument(
+        '-s', '--small',
+        action="store_true",
+        help='small letters'
+    )
+
+    parser.add_argument(
+        '-n', '--numbers',
+        action="store_true",
+        help='numbers'
     )
 
     parser.add_argument(
@@ -31,30 +48,80 @@ def set_arg_parser():
         default=1000,
         help='max number (default: 1000)'
     )
-
+    #TODO if you use -W olek -> returns [o,l,e,k], it should be ["olek"] needs fixing
     parser.add_argument(
         '-W', '--words',
         type=list,
         default=["Mumbo", "Jumbo", "Lumbo"],
-        help='max number (default: ["Mumbo", "Jumbo", "Lumbo"])'
+        help='special words (default: ["Mumbo", "Jumbo", "Lumbo"])'
     )
 
     parser.add_argument(
-        '-R', '--router_name',
+        '-N', '--router_name',
         type=str,
         default="WiFi",
         help='router name (default: WiFi)'
     )
 
+    parser.add_argument(
+        '-L', '--length',
+        type=int,
+        default=9,
+        help='router name (default: 9)'
+    )
+
+    parser.add_argument(
+        '-F', '--file',
+        type=str,
+        default="file.txt",
+        help='router name (default: file.txt)'
+    )
+
     return parser.parse_args()
 
 
-class generator():
+def random_passwords(number_of_chars: int, *options) -> list:
+    returns = []
+    big_letters = string.ascii_uppercase
+    small_letters = string.ascii_lowercase
+    numbers = [str(i) for i in range(0, 10)]
+    tab = []
+    if options[0]:
+        tab += big_letters
+    if options[1]:
+        tab += small_letters
+    if options[2]:
+        tab += numbers
+
+    index = []
+    for _ in range(0, number_of_chars+1):
+        index.append(0)
+
+    b = True
+    while index[-1] != 1:
+        password = ""
+        for k in range(0, number_of_chars):
+            # print("k={},index[k]={}".format(k, index[k]))
+            password += tab[index[k]]
+        returns.append(password)
+        index[0] += 1
+        for i, el in enumerate(index):
+            if el == len(tab):
+                index[i + 1] += 1
+                index[i] = 0
+
+    return returns
+
+
+class Generator:
     def __init__(self, words: [str]):
         self.provided_words = words
         self.passwords = []
-        self.separators = [",", " ", "_", "-", ""]
+        self.separators = [",", " ", "_", "-", "", ";"]
         self.special_chars = ["?", "!", ".", "#", "$", "@"]
+        self.big_letters = string.ascii_uppercase
+        self.small_letters = string.ascii_lowercase
+        self.numbers = [i for i in range(0, 10)]
 
     def help(self):
         print("Hello there mate! This generator is creating passwords, however you like! Just"
@@ -67,15 +134,15 @@ class generator():
 
     def add_capital(self):
         self.provided_words.extend([x.capitalize() for x in self.provided_words])
-        self.provided_words=list(set(self.provided_words))
+        self.provided_words = list(set(self.provided_words))
 
     def add_lower(self):
         self.provided_words.extend([x.lower() for x in self.provided_words])
-        self.provided_words=list(set(self.provided_words))
+        self.provided_words = list(set(self.provided_words))
 
     def add_upper(self):
         self.provided_words.extend([x.upper() for x in self.provided_words])
-        self.provided_words=list(set(self.provided_words))
+        self.provided_words = list(set(self.provided_words))
 
     def generate_simple_provided_words_mix(self):
         # generates all variations of provided words, joined by predefined separators
@@ -105,13 +172,13 @@ class generator():
     def clear(self):
         self.passwords.clear()
 
-
-    def add_random_passwords(self, number_of_chars: int):
+    def add_random_passwords(self, number_of_chars: int, option: dict):
         raise NotImplementedError("Add_random_passwords is not implemented yet")
         # generates absolutely random passwords made of numbers, letters and special chars
-        letters = string.ascii_letters #zwraca duże i małe!
+        letters = string.ascii_letters  # zwraca duże i małe!
         numbers = string.digits
-        characters = string.punctuation #too much!
+        characters = string.punctuation  # too much!
+        tab = []
 
         # tip: itertools:product
 
@@ -143,9 +210,12 @@ class generator():
 if __name__ == '__main__':
     args = set_arg_parser()
     print(args)
+    if args.random:
+        passwords = random_passwords(args.length, args.big, args.small, args.numbers)
+        print(len(passwords))
+    else:
+        gen = Generator(args.words)
 
-    gen = generator(args.words)
-
-    gen.generate_simple_provided_words_mix()
-    gen.add_numbers(args.max_number)
-    print(len(gen.passwords))
+        gen.generate_simple_provided_words_mix()
+        gen.add_numbers(args.max_number)
+        print("olekjas1" in gen.passwords)
